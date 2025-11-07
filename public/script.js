@@ -11,7 +11,7 @@ form.addEventListener('submit', async function (e) {
   appendMessage('user', userMessage);
   input.value = '';
 
-  const botMessage = appendMessage('bot', 'Thinking...');
+  const botMessageElement = appendMessage('bot', 'Thinking...');
 
   try {
     const response = await fetch('/api/chat', {
@@ -32,13 +32,13 @@ form.addEventListener('submit', async function (e) {
     const data = await response.json();
 
     if (data.result) {
-      botMessage.textContent = data.result;
+      botMessageElement.textContent = data.result;
     } else {
-      botMessage.textContent = 'Sorry, no response received.';
+      botMessageElement.textContent = 'Sorry, no response received.';
     }
   } catch (error) {
     console.log('error catch', error);
-    botMessage.textContent = 'Failed to get response from server.';
+    botMessageElement.textContent = 'Failed to get response from server.';
     console.error('Error:', error);
   }
 });
@@ -46,8 +46,13 @@ form.addEventListener('submit', async function (e) {
 function appendMessage(sender, text) {
   const msg = document.createElement('div');
   msg.classList.add('message', sender);
-  msg.textContent = text;
+
+  const msgContent = document.createElement('div');
+  msgContent.classList.add('message-content');
+  msgContent.textContent = text;
+
+  msg.appendChild(msgContent);
   chatBox.appendChild(msg);
   chatBox.scrollTop = chatBox.scrollHeight;
-  return msg;
+  return msgContent; // Return the inner div so its text can be updated
 }
